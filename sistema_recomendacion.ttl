@@ -1,0 +1,558 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rec:  <http://example.org/recomendacion#> .
+
+# ============================================================
+# ONTOLOGÍA
+# ============================================================
+
+rec:SistemaRecomendacion a owl:Ontology ;
+    rdfs:label "Sistema de Recomendación de Maquillaje y Ropa"@es ;
+    rdfs:comment "Ontología del sistema experto con lógica difusa para recomendación de productos según perfil de usuario."@es .
+
+
+# ============================================================
+# CLASES
+# ============================================================
+
+rec:Usuario a owl:Class ;
+    rdfs:label "Usuario"@es ;
+    rdfs:comment "Cliente genérico del sistema. Sus atributos son inferidos por la lógica difusa."@es .
+
+rec:TipoProducto a owl:Class ;
+    rdfs:label "Tipo de Producto"@es .
+
+rec:PerfilEconomico a owl:Class ;
+    rdfs:label "Perfil Económico"@es ;
+    rdfs:comment "Categoría económica obtenida por defuzzificación del presupuesto mensual."@es .
+
+rec:TipoPiel a owl:Class ;
+    rdfs:label "Tipo de Piel"@es ;
+    rdfs:comment "Categoría dermatológica obtenida por defuzzificación de grasa y sensibilidad."@es .
+
+rec:Alergia a owl:Class ;
+    rdfs:label "Alergia"@es .
+
+rec:Marca a owl:Class ;
+    rdfs:label "Marca"@es .
+
+rec:Producto a owl:Class ;
+    rdfs:label "Producto"@es .
+
+rec:Maquillaje a owl:Class ;
+    rdfs:subClassOf rec:Producto ;
+    rdfs:label "Maquillaje"@es .
+
+rec:PrendaSuperior a owl:Class ;
+    rdfs:subClassOf rec:Producto ;
+    rdfs:label "Prenda Superior"@es .
+
+rec:PrendaInferior a owl:Class ;
+    rdfs:subClassOf rec:Producto ;
+    rdfs:label "Prenda Inferior"@es .
+
+rec:Ingrediente a owl:Class ;
+    rdfs:label "Ingrediente"@es .
+
+rec:Material a owl:Class ;
+    rdfs:label "Material"@es .
+
+rec:ReglaExperta a owl:Class ;
+    rdfs:label "Regla Experta"@es ;
+    rdfs:comment "Regla del motor de inferencia con su prioridad (salience)."@es .
+
+
+# ============================================================
+# PROPIEDADES DE OBJETO
+# ============================================================
+
+rec:tienePerfilEconomico a owl:ObjectProperty ;
+    rdfs:domain rec:Usuario ;
+    rdfs:range  rec:PerfilEconomico ;
+    rdfs:label "tiene perfil económico"@es .
+
+rec:tieneTipoPiel a owl:ObjectProperty ;
+    rdfs:domain rec:Usuario ;
+    rdfs:range  rec:TipoPiel ;
+    rdfs:label "tiene tipo de piel"@es .
+
+rec:tieneTipoProducto a owl:ObjectProperty ;
+    rdfs:domain rec:Usuario ;
+    rdfs:range  rec:TipoProducto ;
+    rdfs:label "busca tipo de producto"@es .
+
+rec:tieneAlergia a owl:ObjectProperty ;
+    rdfs:domain rec:Usuario ;
+    rdfs:range  rec:Alergia ;
+    rdfs:label "tiene alergia"@es .
+
+rec:evitaMarca a owl:ObjectProperty ;
+    rdfs:domain rec:Usuario ;
+    rdfs:range  rec:Marca ;
+    rdfs:label "evita marca"@es .
+
+rec:prefiereMarca a owl:ObjectProperty ;
+    rdfs:domain rec:Usuario ;
+    rdfs:range  rec:Marca ;
+    rdfs:label "prefiere marca"@es .
+
+rec:perfilEconomicoMarca a owl:ObjectProperty ;
+    rdfs:domain rec:Marca ;
+    rdfs:range  rec:PerfilEconomico ;
+    rdfs:label "perfil económico de marca"@es ;
+    rdfs:comment "Relaciona una marca con el rango económico al que pertenece."@es .
+
+rec:categoriaProducto a owl:ObjectProperty ;
+    rdfs:domain rec:Marca ;
+    rdfs:range  rec:TipoProducto ;
+    rdfs:label "ofrece categoría de producto"@es .
+
+rec:tieneIngrediente a owl:ObjectProperty ;
+    rdfs:domain rec:Maquillaje ;
+    rdfs:range  rec:Ingrediente ;
+    rdfs:label "contiene ingrediente"@es .
+
+rec:tieneMaterial a owl:ObjectProperty ;
+    rdfs:domain rec:Producto ;
+    rdfs:range  rec:Material ;
+    rdfs:label "fabricado con material"@es .
+
+rec:perteneceA a owl:ObjectProperty ;
+    rdfs:domain rec:Producto ;
+    rdfs:range  rec:Marca ;
+    rdfs:label "pertenece a marca"@es .
+
+rec:recomendadoParaPiel a owl:ObjectProperty ;
+    rdfs:domain rec:Producto ;
+    rdfs:range  rec:TipoPiel ;
+    rdfs:label "recomendado para tipo de piel"@es .
+
+rec:activadaPor a owl:ObjectProperty ;
+    rdfs:domain rec:ReglaExperta ;
+    rdfs:range  rec:TipoProducto ;
+    rdfs:label "activada por tipo de producto"@es .
+
+
+# ============================================================
+# PROPIEDADES DE DATO
+# ============================================================
+
+rec:nombre a owl:DatatypeProperty ;
+    rdfs:label "nombre"@es ;
+    rdfs:range xsd:string .
+
+rec:salience a owl:DatatypeProperty ;
+    rdfs:domain rec:ReglaExperta ;
+    rdfs:range  xsd:integer ;
+    rdfs:label "prioridad (salience)"@es .
+
+rec:presupuestoMinCOP a owl:DatatypeProperty ;
+    rdfs:domain rec:PerfilEconomico ;
+    rdfs:range  xsd:integer ;
+    rdfs:label "presupuesto mínimo (COP)"@es .
+
+rec:presupuestoMaxCOP a owl:DatatypeProperty ;
+    rdfs:domain rec:PerfilEconomico ;
+    rdfs:range  xsd:integer ;
+    rdfs:label "presupuesto máximo (COP)"@es .
+
+rec:defuzzMethod a owl:DatatypeProperty ;
+    rdfs:domain rec:PerfilEconomico ;
+    rdfs:range  xsd:string ;
+    rdfs:label "método de defuzzificación"@es .
+
+rec:funcionPertenencia a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "función de pertenencia difusa"@es .
+
+
+# ============================================================
+# INSTANCIAS — TIPOS DE PRODUCTO
+# ============================================================
+
+rec:Maquillaje_tipo a rec:TipoProducto ;
+    rec:nombre "Maquillaje"^^xsd:string .
+
+rec:PrendaSuperior_tipo a rec:TipoProducto ;
+    rec:nombre "Prenda superior"^^xsd:string .
+
+rec:PrendaInferior_tipo a rec:TipoProducto ;
+    rec:nombre "Prenda inferior"^^xsd:string .
+
+
+# ============================================================
+# INSTANCIAS — PERFILES ECONÓMICOS (con rangos fuzzy en COP)
+# ============================================================
+
+rec:Bajo a rec:PerfilEconomico ;
+    rec:nombre "bajo"^^xsd:string ;
+    rec:presupuestoMinCOP "0"^^xsd:integer ;
+    rec:presupuestoMaxCOP "100000"^^xsd:integer ;
+    rec:funcionPertenencia "zmf(0, 200000)"^^xsd:string ;
+    rec:defuzzMethod "centroide"^^xsd:string .
+
+rec:LigeramenteBajo a rec:PerfilEconomico ;
+    rec:nombre "ligeramente_bajo"^^xsd:string ;
+    rec:presupuestoMinCOP "100000"^^xsd:integer ;
+    rec:presupuestoMaxCOP "200000"^^xsd:integer ;
+    rec:funcionPertenencia "zmf^0.5 (modificador dilatorio)"^^xsd:string ;
+    rec:defuzzMethod "centroide"^^xsd:string .
+
+rec:Medio a rec:PerfilEconomico ;
+    rec:nombre "medio"^^xsd:string ;
+    rec:presupuestoMinCOP "200000"^^xsd:integer ;
+    rec:presupuestoMaxCOP "350000"^^xsd:integer ;
+    rec:funcionPertenencia "gaussmf(270000, 60000)"^^xsd:string ;
+    rec:defuzzMethod "centroide"^^xsd:string .
+
+rec:Alto a rec:PerfilEconomico ;
+    rec:nombre "alto"^^xsd:string ;
+    rec:presupuestoMinCOP "350000"^^xsd:integer ;
+    rec:presupuestoMaxCOP "450000"^^xsd:integer ;
+    rec:funcionPertenencia "smf(350000, 450000)"^^xsd:string ;
+    rec:defuzzMethod "centroide"^^xsd:string .
+
+rec:MuyAlto a rec:PerfilEconomico ;
+    rec:nombre "muy_alto"^^xsd:string ;
+    rec:presupuestoMinCOP "450000"^^xsd:integer ;
+    rec:presupuestoMaxCOP "500000"^^xsd:integer ;
+    rec:funcionPertenencia "smf^2 (modificador concentrador)"^^xsd:string ;
+    rec:defuzzMethod "centroide"^^xsd:string .
+
+
+# ============================================================
+# INSTANCIAS — TIPOS DE PIEL
+# ============================================================
+
+rec:PielSeca a rec:TipoPiel ;
+    rec:nombre "seca"^^xsd:string ;
+    rec:funcionPertenencia "trimf(0, 0, 2.5)"^^xsd:string .
+
+rec:PielNormal a rec:TipoPiel ;
+    rec:nombre "normal"^^xsd:string ;
+    rec:funcionPertenencia "trimf(1.5, 2.5, 4)"^^xsd:string .
+
+rec:PielMixta a rec:TipoPiel ;
+    rec:nombre "mixta"^^xsd:string ;
+    rec:funcionPertenencia "trimf(3, 4, 6)"^^xsd:string .
+
+rec:PielGrasa a rec:TipoPiel ;
+    rec:nombre "grasa"^^xsd:string ;
+    rec:funcionPertenencia "trimf(5, 6.5, 8)"^^xsd:string .
+
+rec:PielSensible a rec:TipoPiel ;
+    rec:nombre "sensible"^^xsd:string ;
+    rec:funcionPertenencia "smf(7.5, 8)"^^xsd:string .
+
+
+# ============================================================
+# INSTANCIAS — ALERGIAS
+# ============================================================
+
+rec:Fragancias       a rec:Alergia ; rec:nombre "Fragancias"^^xsd:string .
+rec:Colorantes       a rec:Alergia ; rec:nombre "Colorantes"^^xsd:string .
+rec:Niquel           a rec:Alergia ; rec:nombre "Níquel"^^xsd:string .
+rec:Aceites          a rec:Alergia ; rec:nombre "Aceites"^^xsd:string .
+rec:ExtractosVeg     a rec:Alergia ; rec:nombre "Extractos vegetales"^^xsd:string .
+
+
+# ============================================================
+# INSTANCIAS — INGREDIENTES (maquillaje)
+# ============================================================
+
+rec:Ing_Fragancias   a rec:Ingrediente ; rec:nombre "Fragancias"^^xsd:string .
+rec:Ing_Colorantes   a rec:Ingrediente ; rec:nombre "Colorantes"^^xsd:string .
+rec:Ing_Niquel       a rec:Ingrediente ; rec:nombre "Níquel"^^xsd:string .
+rec:Ing_Aceites      a rec:Ingrediente ; rec:nombre "Aceites"^^xsd:string .
+rec:Ing_ExtractosVeg a rec:Ingrediente ; rec:nombre "Extractos vegetales"^^xsd:string .
+
+
+# ============================================================
+# INSTANCIAS — MATERIALES (prendas)
+# ============================================================
+
+rec:Algodon   a rec:Material ; rec:nombre "Algodón"^^xsd:string .
+rec:Poliester a rec:Material ; rec:nombre "Poliéster"^^xsd:string .
+rec:Lana      a rec:Material ; rec:nombre "Lana"^^xsd:string .
+rec:Seda      a rec:Material ; rec:nombre "Seda"^^xsd:string .
+rec:Denim     a rec:Material ; rec:nombre "Denim"^^xsd:string .
+rec:Lino      a rec:Material ; rec:nombre "Lino"^^xsd:string .
+rec:Elastano  a rec:Material ; rec:nombre "Elastano"^^xsd:string .
+rec:Viscosa   a rec:Material ; rec:nombre "Viscosa"^^xsd:string .
+
+
+# ============================================================
+# INSTANCIAS — MARCAS (con perfil económico y categoría de producto)
+# Nota: no se crean instancias individuales por producto para
+# mantener el grafo compacto. Los productos típicos se listan
+# como rdfs:comment o se agrupan por categoría de material/ingrediente.
+# ============================================================
+
+# --- MAQUILLAJE ---
+
+rec:NYX a rec:Marca ;
+    rec:nombre "NYX"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Bajo ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Colorantes, Fragancias), Labial (Aceites, Fragancias), Corrector (Colorantes, Extractos vegetales)."@es .
+
+rec:Revlon a rec:Marca ;
+    rec:nombre "Revlon"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:LigeramenteBajo ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Colorantes, Aceites), Labial (Aceites, Fragancias), Polvo compacto (Colorantes, Níquel)."@es .
+
+rec:Loreal a rec:Marca ;
+    rec:nombre "L'Oréal"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Medio ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Colorantes, Fragancias), Labial (Colorantes, Aceites), Máscara de pestañas (Colorantes, Aceites)."@es .
+
+rec:Maybelline a rec:Marca ;
+    rec:nombre "Maybelline"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Medio ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Colorantes, Aceites), Corrector (Colorantes, Fragancias), Delineador (Níquel, Colorantes)."@es .
+
+rec:MAC a rec:Marca ;
+    rec:nombre "MAC"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Alto ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Aceites, Colorantes), Labial (Aceites, Colorantes), Rubor (Colorantes, Aceites), Polvo mineral (Extractos vegetales)."@es .
+
+rec:FentyBeauty a rec:Marca ;
+    rec:nombre "Fenty Beauty"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Alto ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Colorantes, Aceites), Labial (Aceites, Fragancias), Iluminador (Colorantes, Aceites)."@es .
+
+rec:Clinique a rec:Marca ;
+    rec:nombre "Clinique"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:MuyAlto ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Extractos vegetales, Aceites), Corrector (Extractos vegetales, Colorantes), Base hipoalergénica (solo Extractos vegetales)."@es .
+
+rec:NARS a rec:Marca ;
+    rec:nombre "NARS"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:MuyAlto ;
+    rec:categoriaProducto rec:Maquillaje_tipo ;
+    rdfs:comment "Productos típicos: Base líquida (Aceites, Colorantes), Rubor (Colorantes, Aceites), Delineador (Colorantes, Níquel)."@es .
+
+
+# --- PRENDAS SUPERIORES ---
+
+rec:HM a rec:Marca ;
+    rec:nombre "H&M"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Bajo ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Poliéster, Lana. Productos: Camiseta básica, Sudadera, Abrigo largo."@es .
+
+rec:PullBear a rec:Marca ;
+    rec:nombre "Pull&Bear"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:LigeramenteBajo ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Poliéster. Productos: Sudadera estampada, Chaqueta bomber, Camiseta gráfica."@es .
+
+rec:Bershka a rec:Marca ;
+    rec:nombre "Bershka"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:LigeramenteBajo ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Poliéster. Productos: Top crop, Chaqueta biker, Sudadera oversized."@es .
+
+rec:Zara a rec:Marca ;
+    rec:nombre "Zara"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Medio ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Seda, Poliéster, Algodón, Lino. Prendas superiores: Blusa satinada, Chaqueta ligera, Suéter oversize, Camisa de lino. Prendas inferiores: Pantalón de lino."@es .
+
+rec:Uniqlo a rec:Marca ;
+    rec:nombre "Uniqlo"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Medio ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Poliéster, Lana. Productos: Camisa Oxford, Chaqueta ultraligera, Suéter Heattech."@es .
+
+rec:TommyHilfiger a rec:Marca ;
+    rec:nombre "Tommy Hilfiger"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Alto ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Lana, Poliéster. Productos: Camisa clásica, Suéter de punto, Chaqueta deportiva."@es .
+
+rec:RalphLauren a rec:Marca ;
+    rec:nombre "Ralph Lauren"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:MuyAlto ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Lana. Productos: Camisa Polo, Blazer elegante, Suéter cable knit."@es .
+
+rec:CalvinKlein a rec:Marca ;
+    rec:nombre "Calvin Klein"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:MuyAlto ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rdfs:comment "Materiales: Algodón, Lana. Productos: Camisa slim fit, Abrigo estructurado, Suéter minimalista."@es .
+
+
+# --- PRENDAS INFERIORES ---
+
+rec:Wrangler a rec:Marca ;
+    rec:nombre "Wrangler"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Bajo ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Denim, Algodón. Productos: Jean clásico, Pantalón resistente, Short denim, Jean recto."@es .
+
+rec:AmericanEagle a rec:Marca ;
+    rec:nombre "American Eagle"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Bajo ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Denim, Algodón, Poliéster. Productos: Jean skinny, Short verano, Pantalón deportivo, Jean rasgado."@es .
+
+rec:Dockers a rec:Marca ;
+    rec:nombre "Dockers"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Bajo ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Algodón, Lana, Elastano. Productos: Pantalón khaki, Pantalón formal, Short casual, Pantalón slim fit."@es .
+
+rec:Stradivarius a rec:Marca ;
+    rec:nombre "Stradivarius"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:LigeramenteBajo ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Denim, Algodón, Viscosa. Productos: Jean alto, Short casual, Pantalón palazzo, Jean skinny."@es .
+
+rec:Levis a rec:Marca ;
+    rec:nombre "Levi's"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Medio ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Denim, Algodón. Productos: Jean slim, Jean recto, Short, Pantalón casual."@es .
+
+rec:Guess a rec:Marca ;
+    rec:nombre "Guess"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Medio ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Denim, Lana, Algodón, Elastano. Productos: Jean elegante, Pantalón formal, Short moderno, Pantalón slim."@es .
+
+rec:Diesel a rec:Marca ;
+    rec:nombre "Diesel"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:Alto ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Denim, Algodón, Elastano. Productos: Jean moderno, Pantalón urbano, Short casual, Pantalón slim."@es .
+
+rec:MassimoDutti a rec:Marca ;
+    rec:nombre "Massimo Dutti"^^xsd:string ;
+    rec:perfilEconomicoMarca rec:MuyAlto ;
+    rec:categoriaProducto rec:PrendaSuperior_tipo ;
+    rec:categoriaProducto rec:PrendaInferior_tipo ;
+    rdfs:comment "Materiales: Lana, Denim, Algodón, Lino, Seda. Prendas superiores: Blusa de seda. Prendas inferiores: Pantalón formal, Jean elegante, Pantalón clásico, Short lino, Falda de seda."@es .
+
+
+# ============================================================
+# RELACIONES — MATERIALES RECOMENDADOS POR TIPO DE PIEL
+# ============================================================
+
+rec:Algodon rec:recomendadoParaPiel rec:PielSensible .
+rec:Seda    rec:recomendadoParaPiel rec:PielSensible .
+rec:Lino    rec:recomendadoParaPiel rec:PielSensible .
+rec:Aceites rec:recomendadoParaPiel rec:PielSeca .  # ingredientes hidratantes
+rec:ExtractosVeg rec:recomendadoParaPiel rec:PielSeca .
+rec:ExtractosVeg rec:recomendadoParaPiel rec:PielMixta .
+
+
+# ============================================================
+# INSTANCIAS — USUARIO GENÉRICO (plantilla de atributos)
+# ============================================================
+
+rec:Usuario a owl:Class ;
+    rdfs:comment "Un usuario posee: tienePerfilEconomico, tieneTipoPiel, tieneTipoProducto, tieneAlergia (0-n), evitaMarca (0-n), prefiereMarca (1)."@es .
+
+# Ejemplo de instancia usuario (se pueden declarar N usuarios con estos atributos)
+rec:UsuarioEjemplo a rec:Usuario ;
+    rdfs:label "Ejemplo de Usuario"@es ;
+    rdfs:comment "Instancia de referencia que ilustra los atributos posibles de cualquier usuario del sistema."@es ;
+    rec:tienePerfilEconomico rec:Medio ;
+    rec:tieneTipoPiel rec:PielSensible ;
+    rec:tieneTipoProducto rec:Maquillaje_tipo ;
+    rec:tieneAlergia rec:Fragancias ;
+    rec:evitaMarca rec:Revlon ;
+    rec:prefiereMarca rec:Loreal .
+
+
+# ============================================================
+# INSTANCIAS — REGLAS EXPERTAS (motor de inferencia)
+# ============================================================
+
+rec:Regla_MostrarPerfil a rec:ReglaExperta ;
+    rec:nombre "validar_perfil_cliente"^^xsd:string ;
+    rec:salience "180"^^xsd:integer ;
+    rdfs:comment "Muestra el perfil completo del usuario antes de ejecutar recomendaciones."@es .
+
+rec:Regla_MarcasMaquillaje a rec:ReglaExperta ;
+    rec:nombre "mostrar_marcas_maquillaje_disponibles"^^xsd:string ;
+    rec:salience "140"^^xsd:integer ;
+    rec:activadaPor rec:Maquillaje_tipo ;
+    rdfs:comment "Filtra marcas de maquillaje según el perfil económico del usuario."@es .
+
+rec:Regla_FueraRangoMaquillaje a rec:ReglaExperta ;
+    rec:nombre "verificar_marca_maquillaje_fuera_rango"^^xsd:string ;
+    rec:salience "139"^^xsd:integer ;
+    rec:activadaPor rec:Maquillaje_tipo ;
+    rdfs:comment "Alerta si la marca preferida supera el rango económico del usuario (maquillaje)."@es .
+
+rec:Regla_AlergiasMaquillaje a rec:ReglaExperta ;
+    rec:nombre "filtrar_maquillaje_alergias_y_evitadas"^^xsd:string ;
+    rec:salience "138"^^xsd:integer ;
+    rec:activadaPor rec:Maquillaje_tipo ;
+    rdfs:comment "Excluye productos con ingredientes alergénicos o de marcas evitadas (maquillaje)."@es .
+
+rec:Regla_PielMaquillaje a rec:ReglaExperta ;
+    rec:nombre "recomendar_maquillaje_por_tipo_piel"^^xsd:string ;
+    rec:salience "135"^^xsd:integer ;
+    rec:activadaPor rec:Maquillaje_tipo ;
+    rdfs:comment "Recomienda maquillaje adecuado según tipo de piel: sensible→sin fragancias/colorantes; seca→con aceites/extractos; grasa→oil-free; mixta→con extractos sin aceites."@es .
+
+rec:Regla_MarcasSuperiores a rec:ReglaExperta ;
+    rec:nombre "mostrar_marcas_prendas_superiores_disponibles"^^xsd:string ;
+    rec:salience "130"^^xsd:integer ;
+    rec:activadaPor rec:PrendaSuperior_tipo ;
+    rdfs:comment "Filtra marcas de prendas superiores según el perfil económico del usuario."@es .
+
+rec:Regla_FueraRangoSuperior a rec:ReglaExperta ;
+    rec:nombre "verificar_marca_prenda_superior_fuera_rango"^^xsd:string ;
+    rec:salience "129"^^xsd:integer ;
+    rec:activadaPor rec:PrendaSuperior_tipo ;
+    rdfs:comment "Alerta si la marca preferida supera el rango económico del usuario (prendas superiores)."@es .
+
+rec:Regla_AlergiasSuperior a rec:ReglaExperta ;
+    rec:nombre "filtrar_prenda_superior_alergias_y_evitadas"^^xsd:string ;
+    rec:salience "128"^^xsd:integer ;
+    rec:activadaPor rec:PrendaSuperior_tipo ;
+    rdfs:comment "Excluye prendas superiores con materiales alergénicos o de marcas evitadas."@es .
+
+rec:Regla_PielSuperior a rec:ReglaExperta ;
+    rec:nombre "recomendar_prenda_superior_piel_sensible"^^xsd:string ;
+    rec:salience "126"^^xsd:integer ;
+    rec:activadaPor rec:PrendaSuperior_tipo ;
+    rdfs:comment "Recomienda prendas superiores de Algodón, Seda o Lino para piel sensible."@es .
+
+rec:Regla_MarcasInferiores a rec:ReglaExperta ;
+    rec:nombre "mostrar_marcas_prendas_inferiores_disponibles"^^xsd:string ;
+    rec:salience "120"^^xsd:integer ;
+    rec:activadaPor rec:PrendaInferior_tipo ;
+    rdfs:comment "Filtra marcas de prendas inferiores según el perfil económico del usuario."@es .
+
+rec:Regla_FueraRangoInferior a rec:ReglaExperta ;
+    rec:nombre "verificar_marca_prenda_inferior_fuera_rango"^^xsd:string ;
+    rec:salience "119"^^xsd:integer ;
+    rec:activadaPor rec:PrendaInferior_tipo ;
+    rdfs:comment "Alerta si la marca preferida supera el rango económico del usuario (prendas inferiores)."@es .
+
+rec:Regla_AlergiasInferior a rec:ReglaExperta ;
+    rec:nombre "filtrar_prenda_inferior_alergias_y_evitadas"^^xsd:string ;
+    rec:salience "118"^^xsd:integer ;
+    rec:activadaPor rec:PrendaInferior_tipo ;
+    rdfs:comment "Excluye prendas inferiores con materiales alergénicos o de marcas evitadas."@es .
+
+rec:Regla_PielInferior a rec:ReglaExperta ;
+    rec:nombre "recomendar_prenda_inferior_piel_sensible"^^xsd:string ;
+    rec:salience "116"^^xsd:integer ;
+    rec:activadaPor rec:PrendaInferior_tipo ;
+    rdfs:comment "Recomienda prendas inferiores de Algodón, Seda o Lino para piel sensible."@es .
